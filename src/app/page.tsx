@@ -154,23 +154,13 @@ export default function Home(){
                 <Link key={p.id} href={'/posts/'+p.id} className="block group animate-in"
                   style={{animationDelay:i*50+'ms'}}>
                   <article className="card-pinned relative overflow-hidden" style={{padding:'24px'}}>
-                    {/* Bounty badge */}
-                    {p.bounty > 0 && (
-                      <div className="absolute top-4 right-4 px-3 py-1 rounded-full"
-                        style={{background: delivered?'#f3ede4':'#fdf2e9',border:`1px solid ${delivered?'#c9beb4':'#a8573e'}`}}>
-                        <span className="text-[12px] font-bold"
-                          style={{color:delivered?'#665c56':'#a8573e'}}>
-                          {delivered?'已交付':'¥'+p.bounty}
-                        </span>
-                      </div>
-                    )}
                     {tags.length>0 && (
                       <p className="text-[11px] font-semibold uppercase text-[#a8573e] tracking-[0.8px]" style={{marginBottom:'12px'}}>
                         {tags[0]}
                       </p>
                     )}
                     <h3 className="serif font-semibold text-[20px] leading-[120%] text-[#1a1a1a] group-hover:text-[#a8573e] transition-colors"
-                      style={{marginBottom:'10px',paddingRight:p.bounty>0?'80px':'0'}}>
+                      style={{marginBottom:'10px'}}>
                       {p.title}
                     </h3>
                     <p className="text-[14px] font-normal leading-[160%] text-[#665c56] line-clamp-2"
@@ -183,12 +173,13 @@ export default function Home(){
                         <span className={`w-1.5 h-1.5 rounded-full ${delivered?'bg-[#665c56]':p.claimed_by?'bg-[#d9c9bc]':'bg-[#a8573e]'}`}/>
                         {delivered?'已交付':p.claimed_by?'已认领':'待认领'}
                       </span>
-                      <div className="flex items-center gap-3 text-[12px] text-[#665c56]">
-                        <span className="flex items-center gap-1">
+                      <div className="flex items-center gap-3 text-[12px]">
+                        {p.bounty > 0 && <span className="font-bold text-[#a8573e]">¥{p.bounty}</span>}
+                        <span className="flex items-center gap-1 text-[#665c56]">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                           {p.upvotes}
                         </span>
-                        <span className="italic">{fmt(p.created_at)}</span>
+                        <span className="text-[#665c56] italic">{fmt(p.created_at)}</span>
                       </div>
                     </div>
                   </article>
