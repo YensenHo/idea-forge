@@ -7,11 +7,28 @@ export async function GET(request: NextRequest) {
   const db = getDb();
   const { searchParams } = new URL(request.url);
   const sort = searchParams.get('sort') || 'hot';
-  const posts = await db.all(`
+  const tag = searchParams.get('tag') || '';
+  const search = searchParams.get('search') || '';
+
+  let query = `
     SELECT p.*,
       (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
-    FROM posts p ORDER BY p.created_at DESC
-  `) as any[];
+    FROM posts p WHERE 1=1
+  `;
+  const params: unknown[] = [];
+
+  if (tag) {
+    query += ` AND p.tags LIKE ?`;
+    params.push(`%"${tag}"%`);
+  }
+  if (search) {
+    query += ` AND (p.title LIKE ? OR p.description LIKE ?)`;
+    params.push(`%${search}%`, `%${search}%`);
+  }
+
+  query += ` ORDER BY p.created_at DESC`;
+
+  const posts = await db.all(query, ...params) as any[];
   if (sort === 'hot') posts.sort((a, b) => hotScore(b) - hotScore(a));
   return NextResponse.json(posts);
 }
@@ -19,7 +36,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const db = getDb();
   const body = await request.json();
-  const { content } = body;
+  const { content, bounty } = body;
 
   if (!content?.trim()) {
     return NextResponse.json({ error: 'Content is required' }, { status: 400 });
@@ -46,9 +63,11 @@ export async function POST(request: NextRequest) {
     description = raw;
   }
 
+  const bountyAmount = Math.max(0, Number(bounty) || 0);
+
   const result = await db.run(
-    'INSERT INTO posts (title, description, target_user, pain_points, tags) VALUES (?, ?, ?, ?, ?)',
-    title, description, target_user, pain_points, tags
+    'INSERT INTO posts (title, description, target_user, pain_points, tags, bounty) VALUES (?, ?, ?, ?, ?, ?)',
+    title, description, target_user, pain_points, tags, bountyAmount
   );
 
   return NextResponse.json({

@@ -1,5 +1,7 @@
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
+// DeepSeek API (OpenAI-compatible)
+const AI_API_KEY = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
+const AI_BASE_URL = process.env.AI_BASE_URL || 'https://api.deepseek.com/v1';
+const AI_MODEL = process.env.AI_MODEL || 'deepseek-chat';
 
 interface IdeaAnalysis {
   title: string;
@@ -26,19 +28,17 @@ const SYSTEM_PROMPT = `你是一个产品需求分析师。用户会描述一个
 - tags 选择 2-3 个最合适的分类标签，从以下类别中选择或自创合适的：生产力、AI、社交、健康、教育、生活方式、开发工具、职业发展、内容消费、社区、共享经济、远程办公、本地生活、心理健康、宠物、学习、协作、金融、游戏、音乐、旅行`;
 
 export async function analyzeIdea(content: string): Promise<IdeaAnalysis | null> {
-  if (!OPENAI_API_KEY) return null;
-
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+  if (!AI_API_KEY) return null;
 
   try {
-    const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
+    const response = await fetch(`${AI_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${AI_API_KEY}`,
       },
       body: JSON.stringify({
-        model,
+        model: AI_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content },

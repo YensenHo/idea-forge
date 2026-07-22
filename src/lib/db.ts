@@ -18,10 +18,12 @@ const SCHEMA = `
     target_user TEXT DEFAULT '',
     pain_points TEXT DEFAULT '',
     tags TEXT DEFAULT '[]',
+    bounty REAL DEFAULT 0,
     upvotes INTEGER DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now')),
     claimed_by TEXT DEFAULT NULL,
     app_url TEXT DEFAULT NULL,
+    delivered_at TEXT DEFAULT NULL,
     claim_created_at TEXT DEFAULT NULL
   );
   CREATE TABLE IF NOT EXISTS comments (
@@ -33,6 +35,14 @@ const SCHEMA = `
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
   );
 `;
+
+// Migration: add columns if they don't exist (for existing databases)
+function migrate(db: Database.Database) {
+  const cols = db.prepare("PRAGMA table_info(posts)").all() as Array<{name: string}>;
+  const names = new Set(cols.map(c => c.name));
+  if (!names.has('bounty')) db.exec('ALTER TABLE posts ADD COLUMN bounty REAL DEFAULT 0');
+  if (!names.has('delivered_at')) db.exec("ALTER TABLE posts ADD COLUMN delivered_at TEXT DEFAULT NULL");
+}
 
 // ---- Local (better-sqlite3) ----
 function createLocal(): DbAdapter {
@@ -46,6 +56,7 @@ function createLocal(): DbAdapter {
   db.pragma('journal_mode = WAL');
   db.pragma('foreign_keys = ON');
   db.exec(SCHEMA);
+  migrate(db);
 
   return {
     all(sql, ...params) {
