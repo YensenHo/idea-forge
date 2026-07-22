@@ -42,11 +42,11 @@ export default function Detail({ params }: { params: Promise<{ id: string }> }) 
   return(
     <main className="max-w-[900px] mx-auto" style={{padding:'30px 20px'}}>
       <Link href="/" className="inline-flex items-center gap-1.5 text-[13px] text-[#665c56] hover:text-[#a8573e] mb-10 lg:mb-12 transition-colors italic">
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>返回广场
+        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg><span className="whitespace-nowrap">返回广场</span>
       </Link>
 
       <article>
-        {ts.length>0 || p.bounty>0 ? <p className="text-[11px] font-semibold uppercase text-[#a8573e] tracking-[0.8px] mb-2.5">{ts.length>0?ts[0]:'悬赏'}{p.bounty > 0 && <span className="ml-2 font-normal lowercase tracking-normal" style={{color:delivered?'#665c56':'#a8573e'}}>· {delivered?'已交付':'¥'+String(p.bounty)+' 悬赏'}</span>}</p> : null}
+        {ts.length>0 && <p className="text-[11px] font-semibold uppercase text-[#a8573e] tracking-[0.8px] mb-2.5">{ts[0]}</p>}
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-5">
           <h1 className="serif font-bold text-[#1a1a1a] leading-[115%]" style={{fontSize:'clamp(28px,3.5vw,38px)'}}>{p.title}</h1>
           <div className="shrink-0 flex items-center gap-3">
