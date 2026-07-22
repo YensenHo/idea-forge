@@ -46,43 +46,14 @@ export default function Detail({ params }: { params: Promise<{ id: string }> }) 
       </Link>
 
       <article>
-        {/* Bounty banner */}
-        {p.bounty > 0 && (
-          <div className="card-pinned relative overflow-hidden mb-8" style={{padding:'20px 24px'}}>
-            <div className="flex items-center gap-4">
-              <div className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
-                style={{background:delivered?'#f3ede4':'rgba(168,87,62,0.08)'}}>
-                <span className="serif text-2xl font-bold" style={{color:delivered?'#665c56':'#a8573e'}}>
-                  {delivered?'✓':'¥'}
-                </span>
-              </div>
-              <div>
-                <p className="text-[13px] text-[#665c56] font-light mb-0.5">
-                  {delivered?'赏金已交付':'悬赏金额'}
-                </p>
-                <p className="serif text-[28px] font-bold text-[#1a1a1a] leading-none">
-                  {p.bounty} <span className="text-[16px] font-normal text-[#665c56]">元</span>
-                </p>
-              </div>
-              {delivered && p.app_url && (
-                <a href={p.app_url} target="_blank" rel="noopener"
-                  className="ml-auto px-4 py-2 text-[13px] font-medium text-white rounded-md transition-all"
-                  style={{background:'#a8573e'}}>
-                  查看作品 →
-                </a>
-              )}
-            </div>
-          </div>
-        )}
-
-        {ts.length>0 && <p className="text-[11px] font-semibold uppercase text-[#a8573e] tracking-[0.8px] mb-2.5">{ts[0]}</p>}
+        {ts.length>0 || p.bounty>0 ? <p className="text-[11px] font-semibold uppercase text-[#a8573e] tracking-[0.8px] mb-2.5">{ts.length>0?ts[0]:'悬赏'}{p.bounty > 0 && <span className="ml-2 font-normal lowercase tracking-normal" style={{color:delivered?'#665c56':'#a8573e'}}>· {delivered?'已交付':'¥'+String(p.bounty)+' 悬赏'}</span>}</p> : null}
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-5">
           <h1 className="serif font-bold text-[#1a1a1a] leading-[115%]" style={{fontSize:'clamp(28px,3.5vw,38px)'}}>{p.title}</h1>
           <div className="shrink-0 flex items-center gap-3">
             {delivered ? (
               <span className="inline-flex items-center gap-2 px-4 py-2 text-[14px] font-medium text-[#665c56] rounded-md"
                 style={{background:'#f3ede4'}}>
-                ✓ {p.claimed_by} 已交付
+                ✓ {p.claimed_by} 已交付{p.app_url && <a href={p.app_url} target="_blank" rel="noopener" className="ml-2 text-[#a8573e] underline text-[12px]">查看作品</a>}
               </span>
             ) : p.claimed_by ? (
               <>
